@@ -82,6 +82,15 @@
   #apiKeyInput::placeholder { color: var(--muted); font-family: 'DM Sans', sans-serif; letter-spacing: 0; }
   .api-hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
   .api-hint a { color: var(--teal); }
+  #saveKeyBtn {
+    background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 12px; padding: 11px 18px;
+    color: var(--amber); font-weight: 700; font-size: 13px;
+    font-family: 'DM Sans', sans-serif; cursor: pointer;
+    white-space: nowrap; transition: background 0.2s;
+  }
+  #saveKeyBtn:hover { background: rgba(251,191,36,0.2); }
+  .key-saved { font-size: 12px; color: var(--teal); margin-top: 8px; display: none; }
 
   .input-panel {
     background: var(--card); border: 1px solid var(--border);
@@ -199,7 +208,9 @@
     <div class="api-label">🔑 Anthropic API Key</div>
     <div class="api-row">
       <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false" />
+      <button id="saveKeyBtn" onclick="saveApiKey()">💾 Kaydet</button>
     </div>
+    <div class="key-saved" id="keySaved">✅ API key tarayıcıya kaydedildi — bir daha girmen gerekmez.</div>
     <div class="api-hint">
       Ücretsiz proxy'ler yerine Claude API kullanılıyor — proxy hatası yok. 
       API key almak için: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
@@ -237,6 +248,22 @@
 </div>
 <script>
 const products = [];
+
+// API key kaydet / yükle
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key) return;
+  localStorage.setItem('etsy_anthropic_key', key);
+  const saved = document.getElementById('keySaved');
+  saved.style.display = 'block';
+  setTimeout(() => saved.style.display = 'none', 4000);
+}
+
+// Sayfa açılınca kayıtlı key'i yükle
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('etsy_anthropic_key');
+  if (saved) document.getElementById('apiKeyInput').value = saved;
+});
 
 function parseEtsyUrl(url) {
   try {
